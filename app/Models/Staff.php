@@ -13,4 +13,14 @@ class Staff extends Model
     'phone_number',
     'role',
     ];
+    protected $hidden = [
+        'password',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
+}
 }
