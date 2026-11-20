@@ -6,6 +6,7 @@ use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\borrowingsController;
 
 Route::middleware("auth:staff")->group(function () {
     Route::delete("/staff/{id}", [StaffController::class, "destroy"]);
@@ -28,6 +29,9 @@ Route::middleware("auth:customers")->group(function () {
     Route::post("/customer-logout", [CustomerAuthController::class, "logout"]);
     Route::apiResource("customer", "App\Http\Controllers\CustomerController")
         ->parameter("customer", "customer");
+    Route::post("/borrow",        [borrowingsController::class, "borrow"]);
+    Route::get("/borrow",         [borrowingsController::class, "index"]);
+    Route::delete("/borrow/{id}", [borrowingsController::class, "destroy"]);
 });
 
 Route::middleware("auth:sanctum")->group(function () {
