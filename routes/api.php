@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\CustomerAuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\BookController;
 
 Route::middleware("auth:staff")->group(function () {
     Route::delete("/staff/{id}", [StaffController::class, "destroy"]);
@@ -13,6 +15,12 @@ Route::middleware("auth:staff")->group(function () {
     Route::post("/staff",        [StaffController::class, "store"]);
     Route::get("/staff-me",      [StaffAuthController::class, "me"]);
     Route::post("/staff-logout", [StaffAuthController::class, "logout"]);
+    Route::post("/category",             [CategoryController::class, "store"]);
+    Route::put("/category/{category}",    [CategoryController::class, "update"]);
+    Route::delete("/category/{category}", [CategoryController::class, "destroy"]);
+    Route::post("/book",          [BookController::class, "store"]);
+    Route::put("/book/{book}",    [BookController::class, "update"]);
+    Route::delete("/book/{book}", [BookController::class, "destroy"]);
 });
 
 Route::middleware("auth:customers")->group(function () {
@@ -20,6 +28,13 @@ Route::middleware("auth:customers")->group(function () {
     Route::post("/customer-logout", [CustomerAuthController::class, "logout"]);
     Route::apiResource("customer", "App\Http\Controllers\CustomerController")
         ->parameter("customer", "customer");
+});
+
+Route::middleware("auth:sanctum")->group(function () {
+    Route::get("/category",            [CategoryController::class, "index"]);
+    Route::get("/category/{category}", [CategoryController::class, "show"]);
+    Route::get("/book/{book}",         [BookController::class, "show"]);
+    Route::get("/book",                [BookController::class, "index"]);
 });
 
 Route::post("/staff/login",    [StaffAuthController::class, "login"]);
