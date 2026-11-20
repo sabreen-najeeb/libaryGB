@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class borrowingsController extends Controller
@@ -32,5 +33,38 @@ class borrowingsController extends Controller
         $user = auth()->user();
         $user->books()->detach($id);
         return response()->json(['message' => 'done']);
+    }
+
+    public function markAsReturned(Request $request){
+        $request->validate([
+            'customer_id' => ['required', 'exists:customers,id'],
+            'book_id'     => ['required', 'exists:books,id'],
+        ]);
+
+        $customer = Customer::find($request->customer_id);
+
+        $borrowing = $customer->books()
+            ->wherePivot('book_id', $request->book_id)
+            ->wherePivot('is_returned', false)
+            ->first();
+
+        if (!$borrowing) {
+            return response()->json([
+                'message' => 'This customer has no open borrowing for this book'
+            ], 404);
+        }
+
+        $customer->books()
+            ->wherePivot('is_returned', false)
+            ->updateExistingPivot($request->book_id, [
+                'is_returned' => true,
+            ]);
+
+        return response()->json([
+            'message'        => 'Book marked as returned',
+            'customer_id'    => $customer->id,
+            'book_id'        => $borrowing->id,
+            'borrowing_date' => $borrowing->pivot->borrowing_date,
+        ]);
     }
 }

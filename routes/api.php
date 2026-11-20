@@ -22,6 +22,7 @@ Route::middleware("auth:staff")->group(function () {
     Route::post("/book",          [BookController::class, "store"]);
     Route::put("/book/{book}",    [BookController::class, "update"]);
     Route::delete("/book/{book}", [BookController::class, "destroy"]);
+    Route::put("/borrow", [borrowingsController::class, "markAsReturned"]);
 });
 
 Route::middleware("auth:customers")->group(function () {
