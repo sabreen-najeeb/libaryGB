@@ -6,13 +6,22 @@ use App\Http\Requests\BookStoreRequst;
 use App\Http\Requests\BookUpdateRequst;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
+use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::all();
-        return BookResource::collection($books);
+        $query = Book::query();
+
+        if ($request->search) {
+            $query->where("name", "like", "%" . $request->search . "%");
+        }
+        if ($request->category_id) {
+            $query->where("category_id", $request->category_id);
+        }
+
+        return BookResource::collection($query->get());
     }
 
     public function store(BookStoreRequst $request)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CustomerStoreRequest;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -26,6 +27,16 @@ class CustomerAuthController extends Controller
         return response()->json([
             'token' => $token
         ]);
+    }
+
+    public function register(CustomerStoreRequest $request){
+        $customer = Customer::create($request->validated());
+        $token = $customer->createToken('login-token')->plainTextToken;
+
+        return response()->json([
+            'customer' => $customer,
+            'token'    => $token,
+        ], 201);
     }
 
     public function me(){
